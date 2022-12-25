@@ -1,0 +1,46 @@
+﻿input CreatePostInput {
+  content: String!
+}
+
+
+type Post {
+  id: ID!
+  type: String
+  content: String
+  owner: String
+  timestamp: Int
+}
+
+type PostConnection {
+  items: [Post!]!
+  nextToken: String
+}
+
+type Mutation {
+  createPost(input: CreatePostInput!): Post
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+type Query {
+  getPost(id: ID!): Post
+  listPosts(
+    limit: Int,
+    owner: String,
+    sortDirection: SortDirection,
+    nextToken: String,
+  ): PostConnection
+}
+
+type Subscription {
+  onCreate(owner: String): Post @aws_subscribe(mutations: ["createPost"])
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
